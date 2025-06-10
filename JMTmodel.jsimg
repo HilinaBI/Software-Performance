@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<archive xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="JMTmodel.jsimg" timestamp="Mon Jun 09 19:49:52 CEST 2025" xsi:noNamespaceSchemaLocation="Archive.xsd">
+    <sim disableStatisticStop="false" logDecimalSeparator="." logDelimiter="," logPath="C:\Users\hp\JMT" logReplaceMode="0" maxEvents="-1" maxSamples="1000000" name="JMTmodel.jsimg" polling="1.0" xsi:noNamespaceSchemaLocation="SIMmodeldefinition.xsd">
+        <userClass name="MovieSearch" priority="0" referenceSource="Source 1" softDeadline="0.0" type="open"/>
+        <node name="Source 1">
+            <section className="RandomSource">
+                <parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+                        <subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+                        <subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+                            <subParameter classPath="java.lang.Double" name="lambda">
+                                <value>10.0</value>
+                            </subParameter>
+                        </subParameter>
+                    </subParameter>
+                </parameter>
+            </section>
+            <section className="ServiceTunnel"/>
+            <section className="Router">
+                <parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
+                </parameter>
+            </section>
+        </node>
+        <node name="FastAPI">
+            <classSoftDeadlines>
+                <softDeadline>0.0</softDeadline>
+            </classSoftDeadlines>
+            <quantumSize>
+                <quantaSize>0.0</quantaSize>
+            </quantumSize>
+            <quantumSwitchoverTime>
+                <quantumSwitchoverTime>0.0</quantumSwitchoverTime>
+            </quantumSwitchoverTime>
+            <section className="Queue">
+                <parameter classPath="java.lang.Integer" name="size">
+                    <value>-1</value>
+                </parameter>
+                <parameter array="true" classPath="java.lang.String" name="dropStrategies">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="java.lang.String" name="dropStrategy">
+                        <value>drop</value>
+                    </subParameter>
+                </parameter>
+                <parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+                <parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+                </parameter>
+            </section>
+            <section className="Server">
+                <parameter classPath="java.lang.Integer" name="maxJobs">
+                    <value>15</value>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Integer" name="numberOfVisits">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="java.lang.Integer" name="numberOfVisits">
+                        <value>1</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+                        <subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+                        <subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+                            <subParameter classPath="java.lang.Double" name="lambda">
+                                <value>1.0</value>
+                            </subParameter>
+                        </subParameter>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Integer" name="classParallelism">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="java.lang.Integer" name="serverParallelism">
+                        <value>1</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.String" name="serverNames">
+                    <subParameter classPath="java.lang.String" name="serverTypesNames">
+                        <value>FastAPI - Server Type 1</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Integer" name="serversPerServerType">
+                    <subParameter classPath="java.lang.Integer" name="serverTypesNumOfServers">
+                        <value>15</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Object" name="serverCompatibilities">
+                    <subParameter array="true" classPath="java.lang.Boolean" name="serverTypesCompatibilities">
+                        <subParameter classPath="java.lang.Boolean" name="compatibilities">
+                            <value>true</value>
+                        </subParameter>
+                    </subParameter>
+                </parameter>
+                <parameter classPath="java.lang.String" name="schedulingPolicy">
+                    <value>ALIS (Assign Longest Idle Server)</value>
+                </parameter>
+            </section>
+            <section className="Router">
+                <parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
+                </parameter>
+            </section>
+        </node>
+        <node name="Fork 1">
+            <section className="Queue">
+                <parameter classPath="java.lang.Integer" name="size">
+                    <value>-1</value>
+                </parameter>
+                <parameter array="true" classPath="java.lang.String" name="dropStrategies">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="java.lang.String" name="dropStrategy">
+                        <value>drop</value>
+                    </subParameter>
+                </parameter>
+                <parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+                <parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+                </parameter>
+            </section>
+            <section className="ServiceTunnel"/>
+            <section className="Fork">
+                <parameter classPath="java.lang.Integer" name="jobsPerLink">
+                    <value>1</value>
+                </parameter>
+                <parameter classPath="java.lang.Integer" name="block">
+                    <value>-1</value>
+                </parameter>
+                <parameter classPath="java.lang.Boolean" name="isSimplifiedFork">
+                    <value>false</value>
+                </parameter>
+                <parameter array="true" classPath="jmt.engine.NetStrategies.ForkStrategy" name="ForkStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.ForkStrategies.ProbabilitiesFork" name="Branch Probabilities">
+                        <subParameter array="true" classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath" name="EmpiricalEntryArray">
+                            <subParameter classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath" name="OutPathEntry">
+                                <subParameter classPath="jmt.engine.random.EmpiricalEntry" name="outUnitProbability">
+                                    <subParameter classPath="java.lang.String" name="stationName">
+                                        <value>Redis</value>
+                                    </subParameter>
+                                    <subParameter classPath="java.lang.Double" name="probability">
+                                        <value>0.8</value>
+                                    </subParameter>
+                                </subParameter>
+                                <subParameter array="true" classPath="jmt.engine.random.EmpiricalEntry" name="JobsPerLinkDis">
+                                    <subParameter classPath="jmt.engine.random.EmpiricalEntry" name="EmpiricalEntry">
+                                        <subParameter classPath="java.lang.String" name="numbers">
+                                            <value>1</value>
+                                        </subParameter>
+                                        <subParameter classPath="java.lang.Double" name="probability">
+                                            <value>1.0</value>
+                                        </subParameter>
+                                    </subParameter>
+                                </subParameter>
+                            </subParameter>
+                            <subParameter classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath" name="OutPathEntry">
+                                <subParameter classPath="jmt.engine.random.EmpiricalEntry" name="outUnitProbability">
+                                    <subParameter classPath="java.lang.String" name="stationName">
+                                        <value>Postgres</value>
+                                    </subParameter>
+                                    <subParameter classPath="java.lang.Double" name="probability">
+                                        <value>0.2</value>
+                                    </subParameter>
+                                </subParameter>
+                                <subParameter array="true" classPath="jmt.engine.random.EmpiricalEntry" name="JobsPerLinkDis">
+                                    <subParameter classPath="jmt.engine.random.EmpiricalEntry" name="EmpiricalEntry">
+                                        <subParameter classPath="java.lang.String" name="numbers">
+                                            <value>1</value>
+                                        </subParameter>
+                                        <subParameter classPath="java.lang.Double" name="probability">
+                                            <value>1.0</value>
+                                        </subParameter>
+                                    </subParameter>
+                                </subParameter>
+                            </subParameter>
+                        </subParameter>
+                    </subParameter>
+                </parameter>
+            </section>
+        </node>
+        <node name="Redis">
+            <classSoftDeadlines>
+                <softDeadline>0.0</softDeadline>
+            </classSoftDeadlines>
+            <quantumSize>
+                <quantaSize>0.0</quantaSize>
+            </quantumSize>
+            <quantumSwitchoverTime>
+                <quantumSwitchoverTime>0.0</quantumSwitchoverTime>
+            </quantumSwitchoverTime>
+            <section className="Queue">
+                <parameter classPath="java.lang.Integer" name="size">
+                    <value>-1</value>
+                </parameter>
+                <parameter array="true" classPath="java.lang.String" name="dropStrategies">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="java.lang.String" name="dropStrategy">
+                        <value>drop</value>
+                    </subParameter>
+                </parameter>
+                <parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+                <parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+                </parameter>
+            </section>
+            <section className="Server">
+                <parameter classPath="java.lang.Integer" name="maxJobs">
+                    <value>1</value>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Integer" name="numberOfVisits">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="java.lang.Integer" name="numberOfVisits">
+                        <value>1</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+                        <subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+                        <subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+                            <subParameter classPath="java.lang.Double" name="lambda">
+                                <value>10.0</value>
+                            </subParameter>
+                        </subParameter>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Integer" name="classParallelism">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="java.lang.Integer" name="serverParallelism">
+                        <value>1</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.String" name="serverNames">
+                    <subParameter classPath="java.lang.String" name="serverTypesNames">
+                        <value>Redis - Server Type 1</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Integer" name="serversPerServerType">
+                    <subParameter classPath="java.lang.Integer" name="serverTypesNumOfServers">
+                        <value>1</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Object" name="serverCompatibilities">
+                    <subParameter array="true" classPath="java.lang.Boolean" name="serverTypesCompatibilities">
+                        <subParameter classPath="java.lang.Boolean" name="compatibilities">
+                            <value>true</value>
+                        </subParameter>
+                    </subParameter>
+                </parameter>
+                <parameter classPath="java.lang.String" name="schedulingPolicy">
+                    <value>ALIS (Assign Longest Idle Server)</value>
+                </parameter>
+            </section>
+            <section className="Router">
+                <parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
+                </parameter>
+            </section>
+        </node>
+        <node name="Postgres">
+            <classSoftDeadlines>
+                <softDeadline>0.0</softDeadline>
+            </classSoftDeadlines>
+            <quantumSize>
+                <quantaSize>0.0</quantaSize>
+            </quantumSize>
+            <quantumSwitchoverTime>
+                <quantumSwitchoverTime>0.0</quantumSwitchoverTime>
+            </quantumSwitchoverTime>
+            <section className="Queue">
+                <parameter classPath="java.lang.Integer" name="size">
+                    <value>-1</value>
+                </parameter>
+                <parameter array="true" classPath="java.lang.String" name="dropStrategies">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="java.lang.String" name="dropStrategy">
+                        <value>drop</value>
+                    </subParameter>
+                </parameter>
+                <parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+                <parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+                </parameter>
+            </section>
+            <section className="Server">
+                <parameter classPath="java.lang.Integer" name="maxJobs">
+                    <value>1</value>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Integer" name="numberOfVisits">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="java.lang.Integer" name="numberOfVisits">
+                        <value>1</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+                        <subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+                        <subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+                            <subParameter classPath="java.lang.Double" name="lambda">
+                                <value>2.0</value>
+                            </subParameter>
+                        </subParameter>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Integer" name="classParallelism">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="java.lang.Integer" name="serverParallelism">
+                        <value>1</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.String" name="serverNames">
+                    <subParameter classPath="java.lang.String" name="serverTypesNames">
+                        <value>Postgres - Server Type 1</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Integer" name="serversPerServerType">
+                    <subParameter classPath="java.lang.Integer" name="serverTypesNumOfServers">
+                        <value>1</value>
+                    </subParameter>
+                </parameter>
+                <parameter array="true" classPath="java.lang.Object" name="serverCompatibilities">
+                    <subParameter array="true" classPath="java.lang.Boolean" name="serverTypesCompatibilities">
+                        <subParameter classPath="java.lang.Boolean" name="compatibilities">
+                            <value>true</value>
+                        </subParameter>
+                    </subParameter>
+                </parameter>
+                <parameter classPath="java.lang.String" name="schedulingPolicy">
+                    <value>ALIS (Assign Longest Idle Server)</value>
+                </parameter>
+            </section>
+            <section className="Router">
+                <parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
+                </parameter>
+            </section>
+        </node>
+        <node name="Join 1">
+            <section className="Join">
+                <parameter array="true" classPath="jmt.engine.NetStrategies.JoinStrategy" name="JoinStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.JoinStrategies.NormalJoin" name="Standard Join">
+                        <subParameter classPath="java.lang.Integer" name="numRequired">
+                            <value>-1</value>
+                        </subParameter>
+                    </subParameter>
+                </parameter>
+            </section>
+            <section className="ServiceTunnel"/>
+            <section className="Router">
+                <parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
+                </parameter>
+            </section>
+        </node>
+        <node name="Sink 1">
+            <section className="JobSink"/>
+        </node>
+        <node name="LoadBalancer">
+            <classSoftDeadlines>
+                <softDeadline>0.0</softDeadline>
+            </classSoftDeadlines>
+            <section className="Queue">
+                <parameter classPath="java.lang.Integer" name="size">
+                    <value>-1</value>
+                </parameter>
+                <parameter array="true" classPath="java.lang.String" name="dropStrategies">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="java.lang.String" name="dropStrategy">
+                        <value>drop</value>
+                    </subParameter>
+                </parameter>
+                <parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+                <parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+                </parameter>
+            </section>
+            <section className="Delay">
+                <parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+                        <subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+                        <subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+                            <subParameter classPath="java.lang.Double" name="lambda">
+                                <value>100.0</value>
+                            </subParameter>
+                        </subParameter>
+                    </subParameter>
+                </parameter>
+            </section>
+            <section className="Router">
+                <parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+                    <refClass>MovieSearch</refClass>
+                    <subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
+                </parameter>
+            </section>
+        </node>
+        <measure alpha="0.01" name="FastAPI_MovieSearch_Response Time" nodeType="station" precision="0.03" referenceNode="FastAPI" referenceUserClass="MovieSearch" type="Response Time" verbose="false"/>
+        <measure alpha="0.01" name="FastAPI_MovieSearch_Utilization" nodeType="station" precision="0.03" referenceNode="FastAPI" referenceUserClass="MovieSearch" type="Utilization" verbose="false"/>
+        <measure alpha="0.01" name="FastAPI_MovieSearch_Throughput" nodeType="station" precision="0.03" referenceNode="FastAPI" referenceUserClass="MovieSearch" type="Throughput" verbose="false"/>
+        <measure alpha="0.01" name="Redis_MovieSearch_Utilization" nodeType="station" precision="0.03" referenceNode="Redis" referenceUserClass="MovieSearch" type="Utilization" verbose="false"/>
+        <measure alpha="0.01" name="Redis_MovieSearch_Response Time" nodeType="station" precision="0.03" referenceNode="Redis" referenceUserClass="MovieSearch" type="Response Time" verbose="false"/>
+        <measure alpha="0.01" name="Postgres_MovieSearch_Response Time" nodeType="station" precision="0.03" referenceNode="Postgres" referenceUserClass="MovieSearch" type="Response Time" verbose="false"/>
+        <measure alpha="0.01" name="Postgres_MovieSearch_Number of Customers" nodeType="station" precision="0.03" referenceNode="Postgres" referenceUserClass="MovieSearch" type="Number of Customers" verbose="false"/>
+        <connection source="Source 1" target="LoadBalancer"/>
+        <connection source="FastAPI" target="Fork 1"/>
+        <connection source="Fork 1" target="Redis"/>
+        <connection source="Fork 1" target="Postgres"/>
+        <connection source="Redis" target="Join 1"/>
+        <connection source="Postgres" target="Join 1"/>
+        <connection source="Join 1" target="Sink 1"/>
+        <connection source="LoadBalancer" target="FastAPI"/>
+    </sim>
+    <jmodel xsi:noNamespaceSchemaLocation="JModelGUI.xsd">
+        <userClass color="#FFFF6666" name="MovieSearch"/>
+        <station name="Source 1">
+            <position angle="0.0" rotate="false" x="23.0" y="126.0"/>
+        </station>
+        <station name="FastAPI">
+            <position angle="0.0" rotate="false" x="348.0" y="123.0"/>
+        </station>
+        <station name="Fork 1">
+            <position angle="0.0" rotate="false" x="517.0" y="126.0"/>
+        </station>
+        <station name="Redis">
+            <position angle="0.0" rotate="false" x="737.0" y="57.0"/>
+        </station>
+        <station name="Postgres">
+            <position angle="0.0" rotate="false" x="749.0" y="259.0"/>
+        </station>
+        <station name="Join 1">
+            <position angle="0.0" rotate="false" x="993.0" y="163.0"/>
+        </station>
+        <station name="Sink 1">
+            <position angle="0.0" rotate="false" x="1179.0" y="164.0"/>
+        </station>
+        <station name="LoadBalancer">
+            <position angle="0.0" rotate="false" x="169.0" y="103.0"/>
+        </station>
+    </jmodel>
+    <results elapsedTime="3615" logDecimalSeparator="." logDelimiter="," pollingInterval="1.0" xsi:noNamespaceSchemaLocation="Results.xsd">
+        <measure alpha="0.99" analyzedSamples="18586" discardedSamples="65" finalValue="1.0088358251818383" name="FastAPI_MovieSearch_Response Time" nodeType="station" precision="0.03" referenceClass="MovieSearch" referenceStation="FastAPI" state="0" type="2">
+            <sample lastIntervalAvgValue="1.0197320362738391" lowerBound="0.9434447887453525" meanValue="1.0090884100052167" simulationTime="583.2168030399419" upperBound="1.0747320312650808"/>
+            <sample lastIntervalAvgValue="0.9966020365146676" lowerBound="0.9635638825626165" meanValue="1.0088358251818383" simulationTime="1185.4493163200877" upperBound="1.0541077678010602"/>
+            <sample lastIntervalAvgValue="1.0307551635979746" lowerBound="0.9635638825626165" meanValue="1.0088358251818383" simulationTime="1552.7152347074993" upperBound="1.0541077678010602"/>
+            <sample lastIntervalAvgValue="0.998731567370677" lowerBound="0.9635638825626165" meanValue="1.0088358251818383" simulationTime="1853.3059748520461" upperBound="1.0541077678010602"/>
+        </measure>
+        <measure alpha="0.99" analyzedSamples="35410" discardedSamples="10" finalValue="0.6670993797474293" name="FastAPI_MovieSearch_Utilization" nodeType="station" precision="0.03" referenceClass="MovieSearch" referenceStation="FastAPI" state="0" type="6">
+            <sample lastIntervalAvgValue="0.6845795484070613" meanValue="0.6845795484070613" simulationTime="583.2168030399419"/>
+            <sample lastIntervalAvgValue="0.6492623386399953" lowerBound="0.6320666117327006" meanValue="0.6730794964360518" simulationTime="1185.459629052346" upperBound="0.714092381139403"/>
+            <sample lastIntervalAvgValue="0.6745851114619318" lowerBound="0.6320666117327006" meanValue="0.6730794964360518" simulationTime="1552.7152347074993" upperBound="0.714092381139403"/>
+            <sample lastIntervalAvgValue="0.6622985381333604" lowerBound="0.644762633742001" meanValue="0.6670993797474293" simulationTime="1853.3059748520461" upperBound="0.6894361257528575"/>
+        </measure>
+        <measure alpha="0.99" analyzedSamples="10240" discardedSamples="100" finalValue="10.139816407540982" name="FastAPI_MovieSearch_Throughput" nodeType="station" precision="0.03" referenceClass="MovieSearch" referenceStation="FastAPI" state="1" type="5">
+            <sample lastIntervalAvgValue="10.289484062737161" lowerBound="9.470174446260419" meanValue="10.322025115563799" simulationTime="583.2168030399419" upperBound="11.342272698599475"/>
+            <sample lastIntervalAvgValue="9.961580593893341" lowerBound="9.849230322286903" meanValue="10.139816407540982" simulationTime="1018.7902503561136" upperBound="10.448070327448043"/>
+        </measure>
+        <measure alpha="0.99" analyzedSamples="18021" discardedSamples="35" finalValue="0.8018678050010912" name="Redis_MovieSearch_Utilization" nodeType="station" precision="0.03" referenceClass="MovieSearch" referenceStation="Redis" state="0" type="6">
+            <sample lastIntervalAvgValue="0.8093624028146872" lowerBound="0.6711285220496573" meanValue="0.7916331600177914" simulationTime="583.2543353413728" upperBound="0.9121377979859254"/>
+            <sample lastIntervalAvgValue="0.7917766093782841" lowerBound="0.6953586110230394" meanValue="0.8172857156540738" simulationTime="1185.497595581031" upperBound="0.9392128202851082"/>
+            <sample lastIntervalAvgValue="0.7716205256840523" lowerBound="0.7561755142786286" meanValue="0.8018678050010912" simulationTime="1552.8258969703877" upperBound="0.8475600957235538"/>
+            <sample lastIntervalAvgValue="0.7852358569993066" lowerBound="0.7561755142786286" meanValue="0.8018678050010912" simulationTime="1853.3092461689168" upperBound="0.8475600957235538"/>
+        </measure>
+        <measure alpha="0.99" analyzedSamples="14925" discardedSamples="0" finalValue="0.47040119204139985" name="Redis_MovieSearch_Response Time" nodeType="station" precision="0.03" referenceClass="MovieSearch" referenceStation="Redis" state="0" type="2">
+            <sample lastIntervalAvgValue="0.4725967103516194" meanValue="0.4725967103516194" simulationTime="583.2543353413728"/>
+            <sample lastIntervalAvgValue="0.5080794049128533" meanValue="0.4901751231132742" simulationTime="1185.497595581031"/>
+            <sample lastIntervalAvgValue="0.447909154090839" meanValue="0.4802129361099018" simulationTime="1552.8258969703877"/>
+            <sample lastIntervalAvgValue="0.41888953568177406" meanValue="0.47040119204139985" simulationTime="1853.3092461689168"/>
+        </measure>
+        <measure alpha="0.99" analyzedSamples="3693" discardedSamples="0" finalValue="8.261935160284324" name="Postgres_MovieSearch_Response Time" nodeType="station" precision="0.03" referenceClass="MovieSearch" referenceStation="Postgres" state="0" type="2">
+            <sample lastIntervalAvgValue="6.983119813758693" meanValue="6.983119813758693" simulationTime="582.8760672211461"/>
+            <sample lastIntervalAvgValue="6.724230122352032" meanValue="6.849132083407" simulationTime="1184.7475613367117"/>
+            <sample lastIntervalAvgValue="9.749181708035175" meanValue="7.540998397589058" simulationTime="1552.657366506167"/>
+            <sample lastIntervalAvgValue="12.076636327118274" meanValue="8.261935160284324" simulationTime="1852.9188754257004"/>
+        </measure>
+        <measure alpha="0.99" analyzedSamples="7406" discardedSamples="0" finalValue="16.539978004029198" name="Postgres_MovieSearch_Number of Customers" nodeType="station" precision="0.03" referenceClass="MovieSearch" referenceStation="Postgres" state="0" type="0">
+            <sample lastIntervalAvgValue="14.08276468028994" meanValue="14.08276468028994" simulationTime="583.1005679326101"/>
+            <sample lastIntervalAvgValue="13.286210812798767" meanValue="13.678020910563955" simulationTime="1185.4493163200877"/>
+            <sample lastIntervalAvgValue="19.626213484693153" meanValue="15.08495526636313" simulationTime="1552.7152347074993"/>
+            <sample lastIntervalAvgValue="24.059829618295698" meanValue="16.539978004029198" simulationTime="1853.1514783341363"/>
+        </measure>
+    </results>
+</archive>
