@@ -3,6 +3,13 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import sqlite3
 import time
+import logging
+
+logging.basicConfig(
+    filename="service_time.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(message)s"
+)
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -10,6 +17,8 @@ templates = Jinja2Templates(directory="templates")
 # Simple in-memory cache: {query: (results, timestamp)}
 cache = {}
 CACHE_TTL = 300  # 5 minutes
+
+service_times = []
 
 def get_columns():
     """Return list of columns in movies table"""
@@ -47,6 +56,7 @@ def search_movie(request: Request, title: str = ""):
 
     columns_sql = ", ".join(columns)
 
+    service_start = time.perf_counter() # Start service time measure
     # Query the database and convert results to dicts for key access in template
     with sqlite3.connect("movies.db") as conn:
         conn.row_factory = sqlite3.Row
@@ -59,14 +69,31 @@ def search_movie(request: Request, title: str = ""):
         """, ('%' + title.lower() + '%',))
         rows = cursor.fetchall()
         results = [dict(row) for row in rows]  # <-- convert to dicts
+    service_time = time.perf_counter() - service_start  # End service time measure
+    # Aggregation of service time
+    service_times.append(service_time)  
+    avg_service_time = sum(service_times) / len(service_times)
+    logging.info(f"[SERVICE TIME] {service_time:.10f}s | [AVG SERVICE TIME] {avg_service_time:.10f}s")
 
     # Cache results
     cache[title] = (results, now)
 
     print(f"[CACHE MISS] '{title}' took {time.time() - start_time:.4f}s")
 
-    return templates.TemplateResponse("search.html", {
+    render_start = time.perf_counter()
+    response = templates.TemplateResponse("search.html", {
         "request": request,
         "results": results,
         "query": title
     })
+    render_time = time.perf_counter() - render_start
+    logging.info(f"[RENDER TIME] {render_time:.10f}s")
+    return response
+
+@app.middleware("http")
+async def full_service_timer(request: Request, call_next):
+    start = time.perf_counter()
+    response = await call_next(request)
+    duration = time.perf_counter() - start
+    logging.info(f"[TOTAL REQUEST TIME] {duration:.10f}s")
+    return response

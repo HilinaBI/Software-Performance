@@ -49,3 +49,55 @@
     <serviceTime station="PostgreSQL" jobclass="UserRequest" mean="0.050"/>
   </serviceTimes>
 </jmt-model>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<jmt-model name="Improved Movie Search System" version="1.0">
+  <description>Model of improved FastAPI + Redis + PostgreSQL system with caching and load balancing</description>
+  
+  <!-- Stations -->
+  <stations>
+    <station name="LoadBalancer" scheduling="PS" servers="1"/>
+    <station name="FastAPI" scheduling="PS" servers="3"/>
+    <station name="RedisCache" scheduling="PS" servers="1"/>
+    <station name="PostgreSQL" scheduling="PS" servers="1"/>
+  </stations>
+  
+  <!-- Job classes: closed population, adjustable users -->
+  <jobclasses>
+    <jobclass name="UserRequest" population="50"/>
+  </jobclasses>
+  
+  <!-- Routing -->
+  <routing>
+    <!-- From Load Balancer to FastAPI -->
+    <route from="LoadBalancer" to="FastAPI" prob="1"/>
+    
+    <!-- FastAPI queries Redis Cache -->
+    <route from="FastAPI" to="RedisCache" prob="1"/>
+    
+    <!-- Redis Cache hit or miss -->
+    <route from="RedisCache" to="FastAPI" prob="0.8"/>  <!-- cache hit -->
+    <route from="RedisCache" to="PostgreSQL" prob="0.2"/> <!-- cache miss -->
+    
+    <!-- PostgreSQL returns data to FastAPI -->
+    <route from="PostgreSQL" to="FastAPI" prob="1"/>
+    
+    <!-- FastAPI response back to Load Balancer (client) -->
+    <route from="FastAPI" to="LoadBalancer" prob="1"/>
+  </routing>
+  
+  <!-- Service times (mean in seconds), based on your Locust averages and assumptions -->
+  <serviceTimes>
+    <!-- Load Balancer is very fast -->
+    <serviceTime station="LoadBalancer" jobclass="UserRequest" mean="0.005"/>
+    
+    <!-- FastAPI average processing time (includes application logic) -->
+    <serviceTime station="FastAPI" jobclass="UserRequest" mean="0.020"/>
+    
+    <!-- Redis cache is very fast -->
+    <serviceTime station="RedisCache" jobclass="UserRequest" mean="0.001"/>
+    
+    <!-- PostgreSQL query is slower -->
+    <serviceTime station="PostgreSQL" jobclass="UserRequest" mean="0.050"/>
+  </serviceTimes>
+</jmt-model>
