@@ -7,7 +7,7 @@ import re
 
 # Load the log file
 log_file = "service_time.log"
-pattern = re.compile(r"\[SERVICE TIME\] ([\d.]+)s")
+pattern = re.compile(r"\[TOTAL SERVICE TIME\] ([\d.]+)s")
 
 timestamps = []
 service_times = []

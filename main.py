@@ -18,8 +18,6 @@ templates = Jinja2Templates(directory="templates")
 cache = {}
 CACHE_TTL = 300  # 5 minutes
 
-service_times = []
-
 def get_columns():
     """Return list of columns in movies table"""
     with sqlite3.connect("movies.db") as conn:
@@ -34,6 +32,8 @@ def home(request: Request):
 
 @app.get("/search", response_class=HTMLResponse)
 def search_movie(request: Request, title: str = ""):
+    request_start = time.perf_counter()
+    wall_start = time.time()
     start_time = time.time()
 
     # Check cache first
@@ -56,7 +56,7 @@ def search_movie(request: Request, title: str = ""):
 
     columns_sql = ", ".join(columns)
 
-    service_start = time.perf_counter() # Start service time measure
+    db_start = time.perf_counter() # Start db time measure
     # Query the database and convert results to dicts for key access in template
     with sqlite3.connect("movies.db") as conn:
         conn.row_factory = sqlite3.Row
@@ -69,11 +69,7 @@ def search_movie(request: Request, title: str = ""):
         """, ('%' + title.lower() + '%',))
         rows = cursor.fetchall()
         results = [dict(row) for row in rows]  # <-- convert to dicts
-    service_time = time.perf_counter() - service_start  # End service time measure
-    # Aggregation of service time
-    service_times.append(service_time)  
-    avg_service_time = sum(service_times) / len(service_times)
-    logging.info(f"[SERVICE TIME] {service_time:.10f}s | [AVG SERVICE TIME] {avg_service_time:.10f}s")
+    db_time = time.perf_counter() - db_start  # End service time measure
 
     # Cache results
     cache[title] = (results, now)
@@ -87,7 +83,26 @@ def search_movie(request: Request, title: str = ""):
         "query": title
     })
     render_time = time.perf_counter() - render_start
+
+    total_request_time = time.perf_counter() - request_start
+    server_time = total_request_time - db_time
+
+    wall_response_time = time.time() - wall_start
+
+    logging.info(f"[DB TIME] {db_time:.10f}s")
+    logging.info(f"[SERVER TIME] {server_time:.10f}s")
+    logging.info(f"[TOTAL SERVICE TIME] {total_request_time:.10f}s")
+    logging.info(f"[RESPONSE TIME] {wall_response_time:.10f}s")
+    
     logging.info(f"[RENDER TIME] {render_time:.10f}s")
+
+    # Track and log total service time and its average
+    # if not hasattr(request.app.state, "server_service_times"):
+    #     request.app.state.server_service_times = []
+    # request.app.state.server_service_times.append(total_request_time)
+    # avg_total_service_time = sum(request.app.state.server_service_times) / len(request.app.state.server_service_times)
+    # logging.info(f"[TOTAL SERVICE TIME] {total_request_time:.10f}s | [AVG TOTAL SERVICE TIME] {avg_total_service_time:.10f}s")
+
     return response
 
 @app.middleware("http")
@@ -95,5 +110,6 @@ async def full_service_timer(request: Request, call_next):
     start = time.perf_counter()
     response = await call_next(request)
     duration = time.perf_counter() - start
+    request.state.total_request_time = duration
     logging.info(f"[TOTAL REQUEST TIME] {duration:.10f}s")
     return response
